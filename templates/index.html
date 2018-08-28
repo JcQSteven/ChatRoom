@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>Flask-SocketIO Test</title>
+
+</head>
+<body>
+    <h2>局域网聊天室</h2>
+        <input type="text" name="name" id="name" placeholder="Name">
+        <input type="button" id="setName" value="锁定">
+        <input type="text" name="message" id="message" placeholder="Message">
+        <input type="button" id="send" value="发送message">
+
+    <div id='log'></div>
+
+
+</body>
+    <script type="text/javascript" src="//cdn.bootcss.com/jquery/3.1.1/jquery.min.js"></script>
+    <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+        $("#send").click(function () {
+            var msg=$("#message").val()
+            var name=$("#name").val()
+            socket.emit("client_event",{data:msg,name:name});
+        })
+
+        socket.on('res', function (msg) {
+            $('#log').append('<br>' + $('<div/>').text('#' + msg.name + ': ' + msg.data).html());
+        });
+
+        $("#setName").click(function () {
+            $("#name").attr("readonly","true");
+        })
+//        socket.on('disconnect', function() {
+//            socket.emit('client_event', {data: 'I\'m disconnected!'});
+//        });
+
+    </script>
+</html>
