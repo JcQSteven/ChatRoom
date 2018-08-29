@@ -428,3 +428,9 @@ border-radius:6px;
 	top:50%;
 	transform: translateY(-50%);
 }
+#container{
+	width: 690px;
+	height: 270px;
+	overflow-y: auto;
+	overflow-x: hidden;
+}
