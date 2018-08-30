@@ -73,10 +73,10 @@ input {
 	cursor:pointer;
 }
 .friend img{
-	width:50px;
-	height:50px;
+	width:70px;
+	height:70px;
 	border-radius:50%;
-	margin:30px 15px 15px 200px;
+	margin:20px 15px 15px 200px;
 	float:left;
 }
 .friend span {
@@ -433,4 +433,11 @@ border-radius:6px;
 	height: 270px;
 	overflow-y: auto;
 	overflow-x: hidden;
+}
+#hint {
+	position: absolute;
+	width: 40px;
+	top: 230px;
+	left: 140px;
+	z-index: 2;
 }
