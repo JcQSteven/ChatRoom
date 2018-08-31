@@ -1,5 +1,5 @@
 # ChatRoom
-用于局域网聊天的socket聊天室
+FlaskIO编写的SOCKET局域网聊天室
 
 ## 2018/8/28
 - 搭建了简单的socket聊天室
