@@ -72,6 +72,7 @@ def api_upload():
     f=request.files['file']  # 从表单的file字段获取文件，myfile为该表单的name值
     print(f)
     if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
+        (f.filename).replace('../','')  #过滤跨路径上传
         f.save(os.path.join(file_dir, f.filename))  #保存文件到upload目录
         return jsonify({"errmsg": "success"})
     else:
