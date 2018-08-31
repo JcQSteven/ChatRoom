@@ -45,6 +45,8 @@ def register(msg):
     decode_msg(msg)
     sid = request.sid
     name = msg["name"].strip()
+    if(len(name)>5):
+        name=name[0:5]
     if(user.get(name)==None and name!=""):
         user.update({name:sid})
     else:
@@ -73,6 +75,9 @@ def api_upload():
     print(f)
     if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
         (f.filename).replace('../','')  #过滤跨路径上传
+        file_list=os.listdir(file_dir)
+        if file_list.index(f.filename)>0:#防止文件重复覆盖
+            f.filename="重名文件"+f.filename
         f.save(os.path.join(file_dir, f.filename))  #保存文件到upload目录
         return jsonify({"errmsg": "success"})
     else:

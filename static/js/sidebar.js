@@ -17,25 +17,7 @@ $('#display').click(function(){
 
 
 $(function () {
-    $.ajax({
-      url: "http://192.168.10.14:5000/loadfile",
-      type: "POST",
-      success: function(res){
-        
-        let  data = res.data.split(',')
-        if (data.length>1) {
-          $('.content').css('display','block')
-          for(item in data) {
-            sidebarList.innerHTML += `
-            <li><a href="http://192.168.10.14:5000/download/${data[item]}" download="${data[item]}">${data[item]}</a></li>
-            `
-          }
-        }
-        else{
-          $('.content').css('display','none')
-        }
-      }
-    })
+  download()
 
 
   $("#btn_uploadimg").click(function () {
@@ -55,7 +37,7 @@ function uploadFile() {
 
   var data = formFile;
   $.ajax({
-      url: "http://192.168.10.14:5000/upload",
+      url: `http://${document.domain}:${location.port}/upload`,
       data: data,
       type: "Post",
       dataType: "json",
@@ -64,9 +46,25 @@ function uploadFile() {
       contentType: false, //必须
       success: function (result) {
           alert("上传完成!");
-
+          download()
       },
   })
 }
-
-
+setInterval(function(){
+download()
+},5000)
+function download() {
+  sidebarList.innerHTML = ""
+  $.ajax({
+    url: "http://192.168.10.14:5000/loadfile",
+    type: "POST",
+    success: function(res){
+      let  data = res.data.split(',')
+        for(item in data) {
+          sidebarList.innerHTML += `
+          <li><a href="http://${document.domain}:${location.port}/download/${data[item]}" download="${data[item]}">${data[item]}</a></li>
+          `
+        }
+    }
+  })
+}
