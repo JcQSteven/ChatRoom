@@ -76,7 +76,7 @@ def api_upload():
     if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
         (f.filename).replace('../','')  #过滤跨路径上传
         file_list=os.listdir(file_dir)
-        if file_list.index(f.filename)>0:#防止文件重复覆盖
+        if f.filename in file_list.index:#防止文件重复覆盖
             f.filename="重名文件"+f.filename
         f.save(os.path.join(file_dir, f.filename))  #保存文件到upload目录
         return jsonify({"errmsg": "success"})
