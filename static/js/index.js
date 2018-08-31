@@ -1,4 +1,4 @@
-var random_name=Math.random().toString(36).substr(8)
+var random_name=Math.random().toString(36).substr(10)
 var msg=""
 var user=""
 var socket = null

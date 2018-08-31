@@ -6,11 +6,18 @@
 # @Site    : 
 # @File    : main.py
 # @Software: PyCharm
-from flask import Flask,render_template,request
+from flask import Flask,render_template,request,jsonify,send_from_directory
+from flask_cors import *
 from flask_socketio import SocketIO,emit,disconnect
-import binascii
+import os
+
+
 app=Flask(__name__)
+CORS(app,resource=r'/*')
 app.config['SECRET_KEY'] = 'secret!'
+app.config['UPLOAD_FOLDER'] = 'upload'
+ALLOWED_EXTENSIONS = set(['txt', 'png', 'jpg', 'xls', 'JPG', 'PNG', 'xlsx', 'gif', 'GIF'])
+basedir = os.path.abspath(os.path.dirname(__file__))
 socketio = SocketIO(app)
 user={}
 
@@ -57,10 +64,37 @@ def test_disconnect():
             break
     print('%s disconnected'%quit_client)
 
+@app.route('/upload', methods=['POST'], strict_slashes=False)
+def api_upload():
+    file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])  # 拼接成合法文件夹地址
+    if not os.path.exists(file_dir):
+        os.makedirs(file_dir)  # 文件夹不存在就创建
+    f=request.files['file']  # 从表单的file字段获取文件，myfile为该表单的name值
+    print(f)
+    if f and allowed_file(f.filename):  # 判断是否是允许上传的文件类型
+        f.save(os.path.join(file_dir, f.filename))  #保存文件到upload目录
+        return jsonify({"errmsg": "success"})
+    else:
+        return jsonify({"errmsg": "fail"})
+
+@app.route('/loadfile',methods=['POST'])
+def api_loadfile():
+    file_dir = os.path.join(basedir, app.config['UPLOAD_FOLDER'])
+    data = os.listdir(file_dir)
+    data = ','.join(data)
+    return jsonify({"data": data})
+
+@app.route("/download/<path:filename>")
+def downloader(filename):
+    dirpath = os.path.join(app.root_path, 'upload')  # 这里是下在目录，从工程的根目录写起，比如你要下载static/js里面的js文件，这里就要写“static/js”
+    return send_from_directory(dirpath, filename, as_attachment=True)  # as_attachment=True 一定要写，不然会变成打开，而不是下载
+
 def decode_msg(msg):
     for i in msg:
         msg[i]=msg[i].encode('latin-1').decode('utf-8')
-        #print(msg[i])
     return msg
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 if __name__ == '__main__':
     socketio.run(app, host='192.168.10.14',debug=True)
